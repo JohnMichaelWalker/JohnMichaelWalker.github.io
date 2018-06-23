@@ -1,3 +1,6 @@
 function myFunction() {
-    document.getElementById("demo").innerHTML = "Paragraph change...";
+    var firstname = document.getElementById('firstname').value;
+    var lastname = document.getElementById('lastname').value;
+
+    document.getElementById("demo").innerHTML = firstname + ' ' + lastname;
 }
