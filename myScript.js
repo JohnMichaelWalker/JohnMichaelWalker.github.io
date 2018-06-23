@@ -4,23 +4,37 @@ function createEqualsBuilderFromDomain() {
 
     var domainClasses = [];
 
-    document.getElementById("demo").innerHTML = '';
+    document.getElementById("demo").innerHTML = 'dicks';
+
+  
 
     var lines = descriptionEditted.split('\n');
     for (var i = 0; i < lines.length; i++){
         if (!lines[i].match(/\{/gm) 
          && !lines[i].match(/\(/gm)
          && lines[i].match(/private/gm)) {
-            var domainClass = lines[i].match(/(?<=\s)[a-zA-Z0-9_]*(?=;)/gm);
-            domainClasses.push(domainClass)
-            document.getElementById("demo").innerHTML += ' ' + domainClass + '<br>';
+            domainClasses.push(lines[i].match(/(?<=\s)[a-zA-Z0-9_]*(?=;)/gm));
         }
     }
 
-    document.getElementById("demo").innerHTML = 
-      '<h2> Generated implementation of equals method:</h2>'
-     + createEqualsBuilder(domainClasses);
+    document.getElementById("demo").innerHTML =
+        '<h2> Generated implementation of equals method:</h2>';
+    
+    equalsMethod = createEqualsBuilder(domainClasses);
+
+    setDelay(equalsMethod, '', '</pre>');
+1}
+
+function setDelay(equalsMethod, equalsMethodSoFar, endString) {
+    setTimeout(function(){
+      equalsMethodSoFar +=  equalsMethod[equalsMethodSoFar.length];
+      document.getElementById("demo").innerHTML = '<pre>' + equalsMethodSoFar + '</pre>';
+      if (equalsMethodSoFar < equalsMethod) {
+        setDelay(equalsMethod, equalsMethodSoFar, '</pre>');
+      }
+    }, 10);
 }
+
 
 function createEqualsBuilder(domainClasses) {
     var equalsMethod =
