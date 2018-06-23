@@ -2,26 +2,49 @@
 <html>
 <body>
   
-<h1>A Web Page</h1>
+<h1>Equals method builder</h1>
 
-<h2>Running myScript.js on click</h2>
-
-<p id="demo">A Paragraph</p>
-
-<button type="button" onclick="myFunction()">Try It</button> 
+<p id="demo"></p>
 
 <script src="myScript.js"></script>
 
-<h2>Input stuff here</h2>
+<h2>Paste domain class here:</h2>
 
-First name:<br>
-<input type="text" name="firstname" id="firstname"><br>
-Last name:<br>
-<input type="text" name="lastname" id="lastname"><br>
-Description:<br>
-<textarea rows="5" cols="80" id="description">
-  hello
+<textarea rows="5" cols="120" id="description">
+  private class Income {
+    private String title;
+    private String comment;
+    private String date;
+    private Double amount;
+    private Integer category;
+
+    private ExIn(String title, String comment, Double amount, Integer category, String date) {
+        this.title = title;
+        this.comment = comment;
+        this.date = date;
+        this.amount = amount;
+        this.category = category;
+    }
+
+    public Integer getCategory() {
+        return category;
+    }
+
+    private void setCategory(Integer category) {
+        this.category = category;
+    }
+
+    // more getters and setters
+    // Domain Model part starts
+    public boolean isPositive()
+    {
+        return amount > 0 ? true : false;
+    }
+    // more methods like that 
+}
 </textarea>
+
+<button type="button" onclick="createEqualsBuilderFromDomain()">Create equals method</button> 
 
 </body>
 </html>
