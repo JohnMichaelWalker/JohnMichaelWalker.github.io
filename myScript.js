@@ -1,42 +1,55 @@
 function createEqualsBuilderFromDomain() {
-    var description = document.getElementById('description').value;
-    var descriptionEditted = description.replace(/<(?:.|\n)*?>/gm, '');
+    var domainClassString = document.getElementById('description').value;
+    var domainClassStringFormatted = domainClassString.replace(/<(?:.|\n)*?>/gm, '');
 
-    var domainClasses = [];
+    var domainFields = findDomainFields(domainClassStringFormatted);
 
-    document.getElementById("demo").innerHTML = 'dicks';
+    var domainClassName = findDomainClassName(domainClassStringFormatted);
 
-  
-
-    var lines = descriptionEditted.split('\n');
-    for (var i = 0; i < lines.length; i++){
-        if (!lines[i].match(/\{/gm) 
-         && !lines[i].match(/\(/gm)
-         && lines[i].match(/private/gm)) {
-            domainClasses.push(lines[i].match(/(?<=\s)[a-zA-Z0-9_]*(?=;)/gm));
-        }
-    }
-
-    document.getElementById("demo").innerHTML =
+    document.getElementById("equalsTitle").innerHTML =
         '<h2> Generated implementation of equals method:</h2>';
     
-    equalsMethod = createEqualsBuilder(domainClasses);
+    equalsMethod = createEqualsBuilder(domainFields, domainClassName);
 
-    setDelay(equalsMethod, '', '</pre>');
-1}
+    buildEqualsMethod(equalsMethod, '');
+}
 
-function setDelay(equalsMethod, equalsMethodSoFar, endString) {
+
+function buildEqualsMethod(equalsMethod, equalsMethodSoFar) {
     setTimeout(function(){
       equalsMethodSoFar +=  equalsMethod[equalsMethodSoFar.length];
-      document.getElementById("demo").innerHTML = '<pre>' + equalsMethodSoFar + '</pre>';
+      document.getElementById("equalsMethod").innerHTML = '<pre>' + equalsMethodSoFar + '</pre>';
       if (equalsMethodSoFar < equalsMethod) {
-        setDelay(equalsMethod, equalsMethodSoFar, '</pre>');
+        buildEqualsMethod(equalsMethod, equalsMethodSoFar);
       }
     }, 10);
 }
 
 
-function createEqualsBuilder(domainClasses) {
+function findDomainClassName(domainClassString) {
+    var lines = domainClassString.split('\n');
+    for (var i = 0; i < lines.length; i++){
+        if (lines[i].match(/class[a-zA-Z0-9\s]*{/gm)) {
+            return lines[i].match(/(?<=class\s)[a-zA-Z0-9_]*/gm);
+        }
+    }
+}
+
+function findDomainFields(domainClassString) {
+    var domainFields = [];
+    var lines = domainClassString.split('\n');
+    for (var i = 0; i < lines.length; i++){
+        if (!lines[i].match(/\{/gm) 
+         && !lines[i].match(/\(/gm)
+         && lines[i].match(/private/gm)) {
+            domainFields.push(lines[i].match(/(?<=\s)[a-zA-Z0-9_]*(?=;)/gm));
+        }
+    }
+    return domainFields;
+}
+
+
+function createEqualsBuilder(domainFields, domainClassName) {
     var equalsMethod =
         '<pre>'
       + 'public boolean equals(Object obj) {<br>'
@@ -45,14 +58,14 @@ function createEqualsBuilder(domainClasses) {
       + '  if (obj.getClass() != getClass()) {<br>'
       + '    return false;<br>'
       + '  }<br>'
-      + '  MyClass rhs = (MyClass) obj;<br>'
+      + '  ' + domainClassName + ' rhs = (' + domainClassName + ') obj;<br>'
       + '  return new EqualsBuilder()<br>'
       + '               .appendSuper(super.equals(obj)<br>';
 
 
-    for (var i = 0; i < domainClasses.length; i++){
+    for (var i = 0; i < domainFields.length; i++){
         equalsMethod +=
-        '               .append(' + domainClasses[i] + ', rhs.' + domainClasses[i] + ')<br>'
+        '               .append(' + domainFields[i] + ', rhs.' + domainFields[i] + ')<br>'
     }
 
     equalsMethod +=
